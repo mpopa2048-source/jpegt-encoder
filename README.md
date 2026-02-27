@@ -1,5 +1,5 @@
-# JPEGT Encoder
-A JPEGT encoder and viewer.
+# JPEGT/JPEGT+ Encoder
+A JPEGT/JPEGT+ encoder and viewer.
 
 From http://fileformats.archiveteam.org/wiki/JPEGT:
 
@@ -34,4 +34,4 @@ This piece of software was vibe-coded using Claude 3.5 Sonnet
 
 on Websim. When I didn't have a account, I used Ștefan's account for this.
 
-Now is further vibe-coded using Gemini 3 Flash to remove Pako.
+Now is further vibe-coded using Gemini 3 Flash to remove Pako and add JPEGT+, and a few of my changes on top.
