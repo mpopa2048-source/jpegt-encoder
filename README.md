@@ -9,10 +9,10 @@ It's just JPEG with transparency, a feature that didn't come out until earlier w
 
 Likewise, it's being used for clip art, logos, photos, you name it.
 
-JPEGT+ uses the same extensions as JPEGT, but the signature is a little different.
-
 ### JPEGT+
 A new version called JPEGT+ uses JPEG for the mask, which reduces file sizes with somewhat minimal loss in mask quality.
+
+JPEGT+ uses the same extensions as JPEGT, but the signature is a little different.
 
 ## Identification
 ### JPEGT
