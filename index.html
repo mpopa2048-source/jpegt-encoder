@@ -2,447 +2,277 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>JPEGT Converter - Transparent JPEG Files</title>
+<title>JPEGT & JPEGT+ Converter</title>
 <style>
 :root {
-  --primary: #2196F3;
-  --dark: #1976D2;
-  --light: #BBDEFB;
-  --bg: #f5f5f5;
-  --surface: white;
-  --text: #333;
-  --border: #BBDEFB;
+  --primary: #673AB7;
+  --dark: #512DA8;
+  --bg: #f4f7f6;
+  --surface: #ffffff;
+  --text: #2c3e50;
+  --border: #dcdde1;
 }
-
 [data-theme="dark"] {
-  --bg: #121212;
-  --surface: #1e1e1e;
-  --border: #333;
-  --text: #ffffff;
+  --bg: #1a1a1a;
+  --surface: #2d3436;
+  --text: #dfe6e9;
+  --border: #636e72;
 }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+.container { max-width: 800px; margin: 0 auto; }
+.card { background: var(--surface); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 25px; }
+h1 { margin-top: 0; font-weight: 800; text-align: center; color: var(--primary); }
 
-body {
-  font-family: system-ui, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: var(--bg);
-  color: var(--text);
-  transition: background 0.3s, color 0.3s;
-}
+.drop-zone { border: 3px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.01); }
+.drop-zone:hover { border-color: var(--primary); background: rgba(103, 58, 183, 0.05); }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+.controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+.btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
+.btn:hover { background: var(--dark); transform: translateY(-1px); }
 
-.drop-zone {
-  border: 3px dashed var(--border);
-  border-radius: 8px;
-  padding: 40px;
-  text-align: center;
-  background: var(--surface);
-  transition: all 0.3s;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
+.preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+.preview-item { background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; }
+canvas { width: 100%; height: auto; border-radius: 6px; background-image: conic-gradient(#eee 90deg, #fff 90deg 180deg, #eee 180deg 270deg, #fff 270deg); background-size: 16px 16px; border: 1px solid #eee; }
 
-.drop-zone:hover, .drop-zone.drag-over {
-  border-color: var(--primary);
-  background: var(--light);
-}
+.tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; display: inline-block; margin-bottom: 8px; }
+.tag-plus { background: #e67e22; color: #fff; }
+.tag-std { background: #3498db; color: #fff; }
 
-.quality-controls {
-  background: var(--surface);
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.quality-slider {
-  width: 100%;
-  margin: 10px 0;
-}
-
-.preview {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.preview-item {
-  background: var(--surface);
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.preview-item img, .preview-item canvas {
-  max-width: 100%;
-  height: auto;
-  border: 1px solid var(--border);
-  background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%), 
-                    linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-}
-
-.btn {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s;
-}
-
-.btn:hover {
-  background: var(--dark);
-}
-
-.format-comparison {
-  margin: 20px 0;
-  overflow-x: auto;
-}
-
-.format-comparison table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--surface);
-}
-
-.format-comparison th, .format-comparison td {
-  padding: 12px;
-  border: 1px solid var(--border);
-  text-align: center;
-}
-
-.comparison-preview {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.viewer {
-  background: var(--surface);
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 40px;
-  border-top: 4px solid var(--primary);
-}
-
-.theme-toggle {
-  text-align: right;
-  margin-bottom: 10px;
-}
+select, input[type="range"] { padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 5px; }
+label { font-size: 13px; font-weight: bold; color: var(--primary); }
 </style>
 </head>
 <body>
+
 <div class="container">
-  <div class="theme-toggle">
-    <button id="themeToggle" class="btn">Toggle Theme</button>
-  </div>
-  
   <h1>JPEGT Converter</h1>
-  <p>Combine JPEG compression with PNG transparency.</p>
-
-  <div class="format-comparison">
-    <table>
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>JPEG</th>
-          <th>PNG</th>
-          <th>JPEGT</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Transparency</td>
-          <td>❌</td>
-          <td>✅</td>
-          <td>✅</td>
-        </tr>
-        <tr>
-          <td>File Size</td>
-          <td>Small</td>
-          <td>Large</td>
-          <td>Medium</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div id="dropZone" class="drop-zone">
-    <p>Drop PNG files here or click to select</p>
-    <input type="file" id="fileInput" accept=".png" style="display: none" multiple>
-  </div>
-
-  <div class="quality-controls">
-    <label for="quality">JPEG Quality: <span id="qualityValue">85%</span></label>
-    <input type="range" id="quality" class="quality-slider" min="1" max="100" value="85">
-    <button id="convertBtn" class="btn">Download .jpegt Files</button>
-  </div>
-
-  <div class="comparison-preview">
-    <div class="preview-item">
-      <h4>Standard JPEG (No Alpha)</h4>
-      <canvas id="jpegPreview"></canvas>
+  
+  <div class="card">
+    <div id="dropZone" class="drop-zone">
+      <p>Click or Drop <b>PNGs</b> here</p>
+      <input type="file" id="fileInput" accept="image/png" style="display: none" multiple>
     </div>
-    <div class="preview-item">
-      <h4>JPEGT (With Alpha)</h4>
-      <canvas id="jpegtPreview"></canvas>
+
+    <div class="controls">
+      <div>
+        <label>Format Mode</label><br>
+        <select id="modeSelect" style="width:100%">
+          <option value="plus">JPEGT+ (Smaller Files, JPEG Mask)</option>
+          <option value="standard">JPEGT (Larger Files, PNG Mask)</option>
+        </select>
+      </div>
+      <div>
+        <label>Quality: <span id="qVal">85%</span></label><br>
+        <input type="range" id="quality" min="1" max="100" value="85" style="width:100%">
+      </div>
     </div>
+    <button id="convertBtn" class="btn">Convert & Download</button>
   </div>
 
-  <div class="viewer">
-    <h2>JPEGT Viewer</h2>
-    <p>Upload a .jpegt file to decode it back to a transparent image.</p>
-    <div id="viewerDropZone" class="drop-zone">
-      <p>Drop .jpegt, .jpgt files here</p>
-      <input type="file" id="viewerFileInput" accept=".jpegt,.jpgt,.jpet" style="display: none" multiple>
+  <div class="card">
+    <h3 style="margin-top:0">Viewer / Decoder</h3>
+    <div id="viewZone" class="drop-zone" style="padding: 20px;">
+      <p>Drop <b>.jpegt, .jpgt or .jpet</b> files here</p>
     </div>
-    <div id="viewerPreview" class="preview"></div>
-    <button id="savePngBtn" class="btn" style="margin-top:20px">Save All as PNG</button>
+    <div id="viewerPreview" class="preview-grid"></div>
   </div>
 </div>
 
 <script>
-const JPEGT_SIGNATURE = new Uint8Array([0x4A, 0x50, 0x47, 0x54, 0x25, 0x25, 0x31, 0x41, 0x59, 0x26, 0x53, 0x58]);
-const PNG_SIGNATURE = new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+/**
+ * JPEGT Signature logic
+ * Standard: JPGT%% + 31 41 59 26 53 58 (Pi BCD)
+ * Plus:     JPGT%% + 58 53 26 59 41 31 (Pi BCD Reversed)
+ */
+const SIG_BASE = [0x4A, 0x50, 0x47, 0x54, 0x25, 0x25]; 
+const PI_FWD   = [0x31, 0x41, 0x59, 0x26, 0x53, 0x58];
+const PI_REV   = [0x58, 0x53, 0x26, 0x59, 0x41, 0x31];
 
-class JPEGTConverter {
-  constructor() {
-    this.quality = 0.85;
-  }
+const SIG_STANDARD = new Uint8Array([...SIG_BASE, ...PI_FWD]);
+const SIG_PLUS     = new Uint8Array([...SIG_BASE, ...PI_REV]);
 
-  async convertToJPEGT(pngFile) {
-    const img = await this.loadImage(pngFile);
-    
-    // 1. Create the JPEG (RGB on White)
-    const jpegCanvas = document.createElement('canvas');
-    jpegCanvas.width = img.width;
-    jpegCanvas.height = img.height;
-    const jCtx = jpegCanvas.getContext('2d');
-    jCtx.fillStyle = '#FFFFFF';
-    jCtx.fillRect(0, 0, img.width, img.height);
-    jCtx.drawImage(img, 0, 0);
-    const jpegBuffer = await this.canvasToBuffer(jpegCanvas, 'image/jpeg', this.quality);
+class JPEGT {
+  // Fixed: file must be converted to URL before loading into Image
+  static async encode(file, quality, isPlus) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await this.loadImage(url);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
 
-    // 2. Create the Mask (PNG)
-    const maskCanvas = document.createElement('canvas');
-    maskCanvas.width = img.width;
-    maskCanvas.height = img.height;
-    const mCtx = maskCanvas.getContext('2d');
-    mCtx.drawImage(img, 0, 0);
-    
-    const imageData = mCtx.getImageData(0, 0, img.width, img.height);
-    const maskData = mCtx.createImageData(img.width, img.height);
-    
-    for (let i = 0; i < imageData.data.length; i += 4) {
-      const alpha = imageData.data[i + 3];
-      maskData.data[i] = alpha;     // R
-      maskData.data[i + 1] = alpha; // G
-      maskData.data[i + 2] = alpha; // B
-      maskData.data[i + 3] = 255;   // Opaque PNG
+      // 1. Process Main Image (JPEG on White background)
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const mainBuf = await this.canvasToBuf(canvas, 'image/jpeg', quality);
+
+      // 2. Process Alpha Mask
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < idata.data.length; i += 4) {
+        const alpha = idata.data[i + 3];
+        idata.data[i] = idata.data[i+1] = idata.data[i+2] = alpha;
+        idata.data[i+3] = 255; // Opaque mask
+      }
+      ctx.putImageData(idata, 0, 0);
+      
+      const maskBuf = isPlus 
+        ? await this.canvasToBuf(canvas, 'image/jpeg', quality) 
+        : await this.canvasToBuf(canvas, 'image/png');
+
+      // 3. Assemble final binary
+      const sig = isPlus ? SIG_PLUS : SIG_STANDARD;
+      const out = new Uint8Array(sig.length + mainBuf.byteLength + maskBuf.byteLength);
+      out.set(sig, 0);
+      out.set(new Uint8Array(mainBuf), sig.length);
+      out.set(new Uint8Array(maskBuf), sig.length + mainBuf.byteLength);
+      
+      return out;
+    } finally {
+      URL.revokeObjectURL(url);
     }
-    mCtx.putImageData(maskData, 0, 0);
-    const maskBuffer = await this.canvasToBuffer(maskCanvas, 'image/png');
-
-    // 3. Combine
-    const combined = new Uint8Array(JPEGT_SIGNATURE.length + jpegBuffer.byteLength + maskBuffer.byteLength);
-    combined.set(JPEGT_SIGNATURE, 0);
-    combined.set(new Uint8Array(jpegBuffer), JPEGT_SIGNATURE.length);
-    combined.set(new Uint8Array(maskBuffer), JPEGT_SIGNATURE.length + jpegBuffer.byteLength);
-    
-    return combined;
   }
 
-  loadImage(file) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.src = URL.createObjectURL(file);
-    });
-  }
-
-  canvasToBuffer(canvas, type, q) {
-    return new Promise(resolve => {
-      canvas.toBlob(blob => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsArrayBuffer(blob);
-      }, type, q);
-    });
-  }
-}
-
-class JPEGTDisplay {
   static async decode(arrayBuffer) {
     const data = new Uint8Array(arrayBuffer);
     
-    // Verify Signature
-    for(let i=0; i<JPEGT_SIGNATURE.length; i++) {
-        if(data[i] !== JPEGT_SIGNATURE[i]) throw new Error("Invalid JPEGT Format");
-    }
+    // Validate Signature
+    const sigStr = String.fromCharCode(...data.slice(0, 4));
+    if (sigStr !== "JPGT") throw new Error("Invalid JPEGT Signature");
 
-    // Find the PNG start within the file
-    let pngStart = -1;
-    for (let i = JPEGT_SIGNATURE.length; i < data.length - 8; i++) {
+    const isPlus = data[6] === 0x58; // 0x58 is the start of reversed Pi
+
+    // Splitter: Skip signature (12 bytes) and find next file header
+    let maskOffset = -1;
+    for (let i = 20; i < data.length - 4; i++) {
+      // JPEG Start: FF D8 FF
+      if (data[i] === 0xFF && data[i+1] === 0xD8 && data[i+2] === 0xFF) {
+        maskOffset = i;
+        break;
+      }
+      // PNG Start: 89 50 4E 47
       if (data[i] === 0x89 && data[i+1] === 0x50 && data[i+2] === 0x4E && data[i+3] === 0x47) {
-        pngStart = i;
+        maskOffset = i;
         break;
       }
     }
 
-    if (pngStart === -1) throw new Error("Could not find transparency mask");
+    if (maskOffset === -1) throw new Error("Could not split JPEGT components");
 
-    const jpegData = data.slice(JPEGT_SIGNATURE.length, pngStart);
-    const maskData = data.slice(pngStart);
+    const img1Url = URL.createObjectURL(new Blob([data.slice(12, maskOffset)], {type: 'image/jpeg'}));
+    const img2Url = URL.createObjectURL(new Blob([data.slice(maskOffset)], {type: isPlus ? 'image/jpeg' : 'image/png'}));
 
-    const [img, mask] = await Promise.all([
-      this.blobToImage(new Blob([jpegData], {type: 'image/jpeg'})),
-      this.blobToImage(new Blob([maskData], {type: 'image/png'}))
-    ]);
+    try {
+      const [img, mask] = await Promise.all([
+        this.loadImage(img1Url),
+        this.loadImage(img2Url)
+      ]);
 
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    
-    ctx.drawImage(img, 0, 0);
-    const imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    
-    const maskCanvas = document.createElement('canvas');
-    maskCanvas.width = img.width;
-    maskCanvas.height = img.height;
-    const mCtx = maskCanvas.getContext('2d');
-    mCtx.drawImage(mask, 0, 0);
-    const maskPixels = mCtx.getImageData(0, 0, canvas.width, canvas.height);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      
+      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const mCanvas = document.createElement('canvas');
+      mCanvas.width = img.width; mCanvas.height = img.height;
+      const mCtx = mCanvas.getContext('2d');
+      mCtx.drawImage(mask, 0, 0);
+      const mPixels = mCtx.getImageData(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < imgPixels.data.length; i += 4) {
-      // Use Red channel of mask as the Alpha for the final image
-      imgPixels.data[i + 3] = maskPixels.data[i];
+      for (let i = 0; i < pixels.data.length; i += 4) {
+        pixels.data[i+3] = mPixels.data[i]; // Apply mask Red channel to Alpha channel
+      }
+
+      ctx.putImageData(pixels, 0, 0);
+      return { canvas, type: isPlus ? 'JPEGT+' : 'JPEGT' };
+    } finally {
+      URL.revokeObjectURL(img1Url);
+      URL.revokeObjectURL(img2Url);
     }
-
-    ctx.putImageData(imgPixels, 0, 0);
-    return canvas;
   }
 
-  static blobToImage(blob) {
-    return new Promise(resolve => {
+  static loadImage(url) {
+    return new Promise((res, rej) => {
       const img = new Image();
-      img.onload = () => resolve(img);
-      img.src = URL.createObjectURL(blob);
+      img.onload = () => res(img);
+      img.onerror = (err) => rej(new Error("Image Load Failed: check if input is a valid image."));
+      img.src = url;
     });
+  }
+
+  static canvasToBuf(canvas, type, q) {
+    return new Promise(res => canvas.toBlob(b => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.readAsArrayBuffer(b);
+    }, type, q));
   }
 }
 
-// UI LOGIC
-const converter = new JPEGTConverter();
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-const qualitySlider = document.getElementById('quality');
-const qualityValue = document.getElementById('qualityValue');
-const convertBtn = document.getElementById('convertBtn');
+// --- UI Interaction ---
+const $ = id => document.getElementById(id);
 
-// Handle Source PNG Files
-dropZone.onclick = () => fileInput.click();
-fileInput.onchange = (e) => handleFiles(e.target.files);
-dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); };
-dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
-dropZone.ondrop = (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    handleFiles(e.dataTransfer.files);
-};
+$('dropZone').onclick = () => $('fileInput').click();
+$('quality').oninput = () => $('qVal').innerText = $('quality').value + '%';
 
-qualitySlider.oninput = (e) => {
-    const val = e.target.value;
-    qualityValue.innerText = val + '%';
-    converter.quality = val / 100;
-    if(fileInput.files.length > 0) handleFiles(fileInput.files);
-};
+$('convertBtn').onclick = async () => {
+  const files = $('fileInput').files;
+  if (!files.length) return alert("Please select PNG files first.");
+  const isPlus = $('modeSelect').value === 'plus';
 
-async function handleFiles(files) {
-    const file = files[0];
-    if(!file || file.type !== 'image/png') return;
-
-    // Show JPEG preview (flattened)
-    const img = await converter.loadImage(file);
-    const jPreview = document.getElementById('jpegPreview');
-    jPreview.width = img.width; jPreview.height = img.height;
-    const jCtx = jPreview.getContext('2d');
-    jCtx.fillStyle = 'white';
-    jCtx.fillRect(0,0,img.width,img.height);
-    jCtx.drawImage(img, 0, 0);
-
-    // Show JPEGT preview (live decode)
-    const jpegtBytes = await converter.convertToJPEGT(file);
-    const decodedCanvas = await JPEGTDisplay.decode(jpegtBytes.buffer);
-    const jpContainer = document.getElementById('jpegtPreview');
-    jpContainer.width = img.width;
-    jpContainer.height = img.height;
-    jpContainer.getContext('2d').drawImage(decodedCanvas, 0, 0);
-}
-
-convertBtn.onclick = async () => {
-    for (const file of fileInput.files) {
-        const bytes = await converter.convertToJPEGT(file);
-        const blob = new Blob([bytes], {type: 'image/jpegt'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = file.name.replace('.png', '.jpegt');
-        a.click();
+  for (const f of files) {
+    try {
+      const data = await JPEGT.encode(f, $('quality').value / 100, isPlus);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([data]));
+      a.download = f.name.replace('.png', isPlus ? '.jpegt' : '.jpegt');
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e) {
+      alert(`Error converting ${f.name}: ${e.message}`);
     }
+  }
 };
 
-// Viewer Logic
-const viewerDropZone = document.getElementById('viewerDropZone');
-const viewerFileInput = document.getElementById('viewerFileInput');
-const viewerPreview = document.getElementById('viewerPreview');
-
-viewerDropZone.onclick = () => viewerFileInput.click();
-viewerFileInput.onchange = (e) => handleViewerFiles(e.target.files);
-viewerDropZone.ondragover = (e) => e.preventDefault();
-viewerDropZone.ondrop = (e) => {
-    e.preventDefault();
-    handleViewerFiles(e.dataTransfer.files);
-};
-
-async function handleViewerFiles(files) {
-    viewerPreview.innerHTML = '';
-    for (const file of files) {
-        const buffer = await file.arrayBuffer();
-        try {
-            const canvas = await JPEGTDisplay.decode(buffer);
-            const item = document.createElement('div');
-            item.className = 'preview-item';
-            item.innerHTML = `<h4>${file.name}</h4>`;
-            item.appendChild(canvas);
-            viewerPreview.appendChild(item);
-        } catch (e) {
-            alert(e.message);
-        }
+const handleView = async (files) => {
+  for (const f of files) {
+    try {
+      const buf = await f.arrayBuffer();
+      const {canvas, type} = await JPEGT.decode(buf);
+      const div = document.createElement('div');
+      div.className = 'preview-item';
+      div.innerHTML = `<span class="tag ${type === 'JPEGT+' ? 'tag-plus' : 'tag-std'}">${type}</span>`;
+      div.appendChild(canvas);
+      $('viewerPreview').prepend(div);
+    } catch (e) {
+      alert(`Error decoding ${f.name}: ${e.message}`);
     }
-}
-
-document.getElementById('savePngBtn').onclick = () => {
-    const canvases = viewerPreview.querySelectorAll('canvas');
-    canvases.forEach((c, i) => {
-        const a = document.createElement('a');
-        a.href = c.toDataURL('image/png');
-        a.download = `exported_${i}.png`;
-        a.click();
-    });
+  }
 };
 
-document.getElementById('themeToggle').onclick = () => {
-    const theme = document.documentElement.getAttribute('data-theme');
-    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'light' : 'dark');
+$('viewZone').onclick = () => {
+  const i = document.createElement('input');
+  i.type = 'file'; i.multiple = true;
+  i.onchange = (e) => handleView(e.target.files);
+  i.click();
+};
+
+window.ondragover = e => e.preventDefault();
+window.ondrop = e => {
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if (!files.length) return;
+  
+  if (files[0].name.endsWith('.png')) {
+    $('fileInput').files = files;
+    $('qVal').innerText = "Loaded " + files.length + " files";
+  } else {
+    handleView(files);
+  }
 };
 </script>
 </body>
