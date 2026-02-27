@@ -15,6 +15,8 @@ The file starts with `JPGT%%` and then `0x31 0x41 0x59 0x26 0x53 0x58` which it'
 
 Then the JPEG picture comes in, and the PNG mask comes in. A variation of this is mostly the same, but the PNG mask is deflated with Pako, in this case it starts with `CMPR`.
 
+That variation is not longer used, and the current version is using the correct formats.
+
 The idea was also used by Hemera Photo-Object, but the signature is not the same, but how it works it's the same.
 
 ## Disclaimer
