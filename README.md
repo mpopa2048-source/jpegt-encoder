@@ -9,6 +9,11 @@ It's just JPEG with transparency, a feature that didn't come out until earlier w
 
 Likewise, it's being used for clip art, logos, photos, you name it.
 
+JPEGT+ uses the same extensions as JPEGT, but the signature is a little different.
+
+### JPEGT+
+A new version called JPEGT+ uses JPEG for the mask, which reduces file sizes with somewhat minimal loss in mask quality.
+
 ## Identification
 ### JPEGT
 The file starts with `JPGT%%` and then `0x31 0x41 0x59 0x26 0x53 0x58` which it's the first 12 BCD encoded digits of pi.
