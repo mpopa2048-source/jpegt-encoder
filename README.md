@@ -11,7 +11,7 @@ Likewise, it's being used for clip art, logos, photos, you name it.
 
 ## Identification
 
-The file starts with `JPGT%%`` and then `0x31 0x41 0x59 0x26 0x53 0x58`` which it's the first 12 BCD encoded digits of pi.
+The file starts with `JPGT%%` and then `0x31 0x41 0x59 0x26 0x53 0x58` which it's the first 12 BCD encoded digits of pi.
 
 Then the JPEG picture comes in, and the PNG mask comes in. The idea was also used by Hemera Photo-Object, but the signature is not the same, but how it works it's the same.
 
